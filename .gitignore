@@ -1,0 +1,33 @@
+# ESP-IDF build output
+build/
+sdkconfig
+sdkconfig.old
+managed_components/
+dependencies.lock
+*.bin
+*.elf
+*.map
+
+# Recordings — see data/README.md for where these live
+data/raw/**
+data/processed/**
+!data/**/README.md
+!data/**/*_meta.json
+*.csv
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Models — keep final deployed ones, ignore experiments
+models/experiments/
+*.h5
+!models/final/*.tflite
+
+# macOS / editors
+.DS_Store
+.vscode/
+.idea/

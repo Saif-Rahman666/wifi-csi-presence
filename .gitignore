@@ -22,10 +22,12 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 
-# Models — keep final deployed ones, ignore experiments
-models/experiments/
-*.h5
-!models/final/*.tflite
+# Models — commit final/benchmarked ones, not scratch
+models/checkpoints/
+models/downloads/
+logs/
+runs/
+*.ckpt
 
 # macOS / editors
 .DS_Store

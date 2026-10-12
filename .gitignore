@@ -23,7 +23,6 @@ venv/
 .ipynb_checkpoints/
 
 # Models — commit final/benchmarked ones, not scratch
-models/checkpoints/
 models/downloads/
 logs/
 runs/

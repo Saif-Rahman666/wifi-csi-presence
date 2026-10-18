@@ -1,0 +1,18 @@
+{
+  "label": "empty",
+  "room": "tim-living-room",
+  "date": "2026-10-18",
+  "start_time": "15:24:34",
+  "duration_s": 120.0,
+  "packets": 5663,
+  "packets_per_s": 47.2,
+  "incomplete_lines": 0,
+  "subject": null,
+  "distance_m": null,
+  "board_positions": null,
+  "obstruction": null,
+  "notes": null,
+  "firmware_commit": "69a7318",
+  "port": "/dev/ttyUSB0",
+  "baud": 921600
+}

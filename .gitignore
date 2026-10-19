@@ -13,7 +13,7 @@ data/raw/**
 data/processed/**
 !data/**/README.md
 !data/**/*_meta.json
-*.csv
+!*.csv
 
 # Python
 __pycache__/

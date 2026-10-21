@@ -1,4 +1,6 @@
 # ESP-IDF build output
+esp-csi
+
 build/
 sdkconfig
 sdkconfig.old

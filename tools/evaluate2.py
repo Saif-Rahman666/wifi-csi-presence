@@ -1,27 +1,3 @@
-"""Score a trained int8 model on recordings it never trained on, scenario by scenario.
-
-Use it for the obstruction and distance tests: each scenario is one folder
-(the --room name used with record_csi.py), e.g.
-
-    data/scenarios/los-4m/2026-10-21/empty_101500.csv
-    data/scenarios/door-wood/2026-10-21/moving_103000.csv
-
-Keep the scenarios out of the training folder, or train_csi.py will train on them too.
-
-For every scenario it reports, with the same preprocessing as training (preprocess.json):
-  moving found        share of 'moving' windows the model called moving   (recall of moving)
-  quiet called quiet  share of 'empty'/'still' windows NOT called moving  (specificity)
-  balanced            the average of the two
-  3-class accuracy    empty / still / moving, when the model has those labels
-plus the mean RSSI and, from the _meta.json files, distance and obstruction.
-
-Examples:
-    python tools/evaluate.py --data data/scenarios
-    python tools/evaluate.py --data data/scenarios --model models/final/cnn1d_int8.tflite --prep models/final/preprocess.json
-
-Needs:  python -m pip install tensorflow numpy matplotlib     (matplotlib only for the chart)
-"""
-
 import argparse
 import csv
 import json
@@ -35,10 +11,10 @@ os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
 import numpy as np
 
 LABEL_ORDER = ["empty", "still", "moving"]
-REPO = Path(__file__).resolve().parents[1]          # tools/ -> repository root
+REPO = Path(__file__).resolve().parents[1]         
 
 CHECKPOINTS = REPO / "models" / "checkpoints"
-RSSI_FIELD = 3                      # position of rssi in a CSI_DATA line
+RSSI_FIELD = 3                     
 
 
 def load_recording(path):
@@ -59,9 +35,9 @@ def load_recording(path):
                 rows.append(values)
     if not rows:
         return np.zeros((0, 0), dtype=np.float32)
-    usual = Counter(r.size for r in rows).most_common(1)[0][0]   # drop odd-length packets
+    usual = Counter(r.size for r in rows).most_common(1)[0][0] 
     data = np.array([r for r in rows if r.size == usual])
-    imag, real = data[:, 0::2], data[:, 1::2]                    # stored as imaginary, real
+    imag, real = data[:, 0::2], data[:, 1::2]                 
     return np.sqrt(imag * imag + real * real)
 
 
@@ -81,7 +57,7 @@ def find_recordings(folder, labels=None, quiet=False):
             found.append((parts[0], parts[1], path))
         elif first in labels:
             room_dir = path.parent
-            if room_dir.name[:1].isdigit():          # skip the date folder
+            if room_dir.name[:1].isdigit():     
                 room_dir = room_dir.parent
             found.append((room_dir.name, first, path))
         elif not quiet:
@@ -193,7 +169,7 @@ def main():
 
     scen = defaultdict(lambda: {"true": [], "pred": [], "rssi": [], "pps": [], "distance": None, "obstruction": None,
                                  "notes": []})
-    records = []                                       # one entry per recording, for --by-recording
+    records = []                                      
     for room, label, path in recordings:
         amp = load_recording(path)
         if amp.size == 0 or amp.shape[1] < needed:
@@ -428,7 +404,7 @@ def plot(results, path):
     fig.tight_layout()
     try:
         fig.savefig(path, dpi=140)
-    except OSError:                                     # Windows: the old image is open in a viewer
+    except OSError:                               
         import time
         path = path.with_name(f"scenario_results_{time.strftime('%H%M%S')}.png")
         fig.savefig(path, dpi=140)

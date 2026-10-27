@@ -1,7 +1,3 @@
-"""Turn preprocess.json (from train_csi.py) into main/preprocess_config.h for the ESP32.
-
-    python tools/gen_preprocess_h.py models/checkpoints/preprocess.json main/preprocess_config.h
-"""
 import json
 import sys
 from pathlib import Path

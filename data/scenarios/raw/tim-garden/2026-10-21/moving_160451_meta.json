@@ -1,0 +1,18 @@
+{
+  "label": "moving",
+  "room": "tim-garden",
+  "date": "2026-10-21",
+  "start_time": "16:04:51",
+  "duration_s": 30.0,
+  "packets": 1318,
+  "packets_per_s": 43.9,
+  "incomplete_lines": 0,
+  "subject": null,
+  "distance_m": null,
+  "board_positions": null,
+  "obstruction": null,
+  "notes": "tx outside rx approx 8m outside away, person outside no obs LOS",
+  "firmware_commit": "af6ac03",
+  "port": "COM8",
+  "baud": 921600
+}

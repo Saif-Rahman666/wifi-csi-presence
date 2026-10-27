@@ -1,0 +1,112 @@
+I (252885) csi_model: empty    (empty  62%  still   0%  moving  37%  ) 51.1 ms
+I (260495) stats: 47.3 pkt/s | 10 inferences, 51.09 ms avg, 51.23 ms max | CPU: model 5.1%, window build 4.7%, per-packet 7.9% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (270495) stats: 46.8 pkt/s | 9 inferences, 51.14 ms avg, 51.41 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.8% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+task             time        %
+stats          	81259		<1%
+IDLE           	231321419		85%
+tcpip          	58638		<1%
+Tmr Svc        	71		<1%
+sys_evt        	155		<1%
+esp_timer      	66565		<1%
+wifi           	19760398		7%
+csi_infer      	18834665		6%
+btController   	17184		<1%
+nimble_host    	7117		<1%
+I (273115) csi_model: moving   (empty  36%  still   1%  moving  63%  ) 51.1 ms
+I (275295) csi_model: empty    (empty  65%  still   0%  moving  35%  ) 51.1 ms
+I (280495) stats: 45.8 pkt/s | 9 inferences, 51.13 ms avg, 51.51 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.6% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (284015) csi_model: moving   (empty  28%  still   0%  moving  71%  ) 51.1 ms
+I (286135) csi_model: empty    (empty  54%  still   0%  moving  46%  ) 51.1 ms
+I (290495) stats: 46.6 pkt/s | 10 inferences, 51.08 ms avg, 51.23 ms max | CPU: model 5.1%, window build 4.7%, per-packet 7.7% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (291535) csi_model: moving   (empty  32%  still   0%  moving  67%  ) 51.1 ms
+I (294785) csi_model: empty    (empty  75%  still   0%  moving  25%  ) 51.2 ms
+I (300495) stats: 46.4 pkt/s | 9 inferences, 51.09 ms avg, 51.22 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.7% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+task             time        %
+stats          	91664		<1%
+IDLE           	256128646		85%
+tcpip          	65846		<1%
+sys_evt        	155		<1%
+btController   	17184		<1%
+esp_timer      	71193		<1%
+wifi           	22373107		7%
+csi_infer      	21392488		7%
+nimble_host    	7117		<1%
+Tmr Svc        	71		<1%
+I (305555) csi_model: moving   (empty  29%  still   3%  moving  68%  ) 51.2 ms
+I (310495) stats: 46.4 pkt/s | 9 inferences, 50.92 ms avg, 51.62 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.7% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (314125) csi_model: empty    (empty  55%  still   0%  moving  45%  ) 51.1 ms
+I (316245) csi_model: moving   (empty  44%  still   3%  moving  53%  ) 51.4 ms
+I (319395) csi_model: empty    (empty  62%  still   3%  moving  35%  ) 51.2 ms
+I (320495) stats: 47.2 pkt/s | 10 inferences, 51.15 ms avg, 51.50 ms max | CPU: model 5.1%, window build 4.7%, per-packet 7.8% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (327885) csi_model: still    (empty  36%  still  36%  moving  28%  ) 50.8 ms
+I (328955) csi_model: moving   (empty  35%  still  28%  moving  37%  ) 51.1 ms
+I (330495) stats: 47.0 pkt/s | 9 inferences, 50.99 ms avg, 51.22 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.8% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+task             time        %
+stats          	102776		<1%
+IDLE           	280913155		85%
+tcpip          	73093		<1%
+btController   	17184		<1%
+nimble_host    	7117		<1%
+esp_timer      	75886		<1%
+wifi           	25010091		7%
+csi_infer      	23950940		7%
+Tmr Svc        	71		<1%
+sys_evt        	155		<1%
+I (332145) csi_model: empty    (empty  64%  still   0%  moving  36%  ) 51.1 ms
+I (339555) csi_model: moving   (empty  23%  still   3%  moving  74%  ) 51.1 ms
+I (340495) stats: 47.2 pkt/s | 9 inferences, 51.14 ms avg, 51.49 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.9% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (343805) csi_model: empty    (empty  71%  still   4%  moving  25%  ) 51.1 ms
+I (345945) csi_model: moving   (empty  34%  still   0%  moving  66%  ) 51.1 ms
+I (350495) stats: 47.1 pkt/s | 10 inferences, 51.06 ms avg, 51.32 ms max | CPU: model 5.1%, window build 4.7%, per-packet 7.8% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (353485) csi_model: empty    (empty  54%  still   0%  moving  46%  ) 51.1 ms
+I (357805) csi_model: moving   (empty  36%  still  20%  moving  44%  ) 51.1 ms
+I (358875) csi_model: empty    (empty  39%  still  31%  moving  30%  ) 51.1 ms
+I (360495) stats: 46.0 pkt/s | 9 inferences, 51.09 ms avg, 51.15 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.7% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+task             time        %
+stats          	112438		<1%
+IDLE           	305694062		84%
+tcpip          	80285		<1%
+nimble_host    	7117		<1%
+Tmr Svc        	71		<1%
+esp_timer      	80537		<1%
+wifi           	27645709		7%
+csi_infer      	26509913		7%
+sys_evt        	155		<1%
+btController   	17184		<1%
+I (361065) csi_model: moving   (empty  24%  still  25%  moving  51%  ) 51.1 ms
+I (363245) csi_model: empty    (empty  60%  still  15%  moving  26%  ) 51.2 ms
+I (370495) stats: 46.1 pkt/s | 9 inferences, 50.92 ms avg, 51.51 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.7% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (380535) stats: 46.4 pkt/s | 10 inferences, 51.14 ms avg, 51.53 ms max | CPU: model 5.1%, window build 4.7%, per-packet 7.7% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (382635) csi_model: moving   (empty  32%  still   6%  moving  62%  ) 51.1 ms
+I (386935) csi_model: still    (empty   1%  still  72%  moving  27%  ) 50.9 ms
+I (390165) csi_model: moving   (empty   8%  still  17%  moving  75%  ) 51.1 ms
+I (390535) stats: 46.7 pkt/s | 9 inferences, 51.07 ms avg, 51.15 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.8% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+task             time        %
+stats          	123601		<1%
+IDLE           	330533127		84%
+tcpip          	87495		<1%
+Tmr Svc        	71		<1%
+sys_evt        	155		<1%
+esp_timer      	85321		<1%
+wifi           	30268491		7%
+csi_infer      	29068057		7%
+btController   	17184		<1%
+nimble_host    	7117		<1%
+I (399725) csi_model: empty    (empty  60%  still   6%  moving  34%  ) 51.1 ms
+I (400535) stats: 47.1 pkt/s | 9 inferences, 51.15 ms avg, 51.66 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.8% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (402955) csi_model: moving   (empty  33%  still   9%  moving  58%  ) 51.1 ms
+I (407155) csi_model: empty    (empty  60%  still  18%  moving  23%  ) 51.1 ms
+I (410535) stats: 46.9 pkt/s | 10 inferences, 51.13 ms avg, 51.41 ms max | CPU: model 5.1%, window build 4.7%, per-packet 7.8% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+I (420535) stats: 47.2 pkt/s | 9 inferences, 50.86 ms avg, 51.17 ms max | CPU: model 4.6%, window build 4.2%, per-packet 7.9% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B
+task             time        %
+stats          	133029		<1%
+IDLE           	355293397		84%
+tcpip          	94662		<1%
+sys_evt        	155		<1%
+btController   	17184		<1%
+esp_timer      	89919		<1%
+wifi           	32926001		7%
+csi_infer      	31625936		7%
+nimble_host    	7117		<1%
+Tmr Svc        	71		<1%
+I (430555) stats: 47.1 pkt/s | 10 inferences, 51.13 ms avg, 51.49 ms max | CPU: model 5.1%, window build 4.7%, per-packet 7.9% | dropped 0 | heap free 15620, min 11264, largest 7680 | infer stack left 5708 B | arena 8476 B

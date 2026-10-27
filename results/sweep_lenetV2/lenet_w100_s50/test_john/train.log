@@ -1,0 +1,71 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793099981.472216    6236 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793099985.658862    6236 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+Loading 36 recordings from 'data\raw'...
+Rooms: ['john', 'saifLiving', 'tim-living-room'].  Testing on unseen room 'john', training on the rest.
+Validation: the latest session of each room and label.
+Input: 100 packets x 64 columns (from 166 active of 192 subcarriers)
+Windows: train 1673, validation 663, test 1608
+  train: empty 559, still 557, moving 557
+  test: empty 533, still 556, moving 519
+
+=== lenet ===
+trained 21 epochs, best validation accuracy 0.854
+Saved artifact at 'C:\Users\JOHN\AppData\Local\Temp\tmpm2vd8pc7'. The following endpoints are available:
+
+* Endpoint 'serve'
+  args_0 (POSITIONAL_ONLY): TensorSpec(shape=(None, 100, 64, 1), dtype=tf.float32, name='csi_window')
+Output Type:
+  TensorSpec(shape=(None, 3), dtype=tf.float32, name=None)
+Captures:
+  2652893815888: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893816272: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893816464: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893817040: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893818384: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893815504: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893817616: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893818192: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893814736: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893819728: TensorSpec(shape=(), dtype=tf.resource, name=None)
+Saved artifact at 'C:\Users\JOHN\AppData\Local\Temp\tmpx5atuxnk'. The following endpoints are available:
+
+* Endpoint 'serve'
+  args_0 (POSITIONAL_ONLY): TensorSpec(shape=(None, 100, 64, 1), dtype=tf.float32, name='csi_window')
+Output Type:
+  TensorSpec(shape=(None, 3), dtype=tf.float32, name=None)
+Captures:
+  2652893815888: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893816272: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893816464: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893817040: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893818384: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893815504: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893817616: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893818192: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893814736: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2652893819728: TensorSpec(shape=(), dtype=tf.resource, name=None)
+C:\Users\JOHN\AppData\Local\Programs\Python\Python311\Lib\site-packages\tensorflow\lite\python\convert.py:846: UserWarning: Statistics for quantized inputs were expected, but not specified; continuing anyway.
+  warnings.warn(
+fully_quantize: 0, inference_type: 6, input_inference_type: INT8, output_inference_type: INT8
+C:\Users\JOHN\AppData\Local\Programs\Python\Python311\Lib\site-packages\tensorflow\lite\python\interpreter.py:457: UserWarning:     Warning: tf.lite.Interpreter is deprecated and is scheduled for deletion in
+    TF 2.20. Please use the LiteRT interpreter from the ai_edge_litert package.
+    See the [migration guide](https://ai.google.dev/edge/litert/migration)
+    for details.
+    
+  warnings.warn(_INTERPRETER_DELETION_WARNING)
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+test accuracy: float 0.524, int8 0.523
+int8 confusion matrix (rows = true, columns = predicted):
+              empty    still   moving
+     empty       99        4      430
+     still       22      313      221
+    moving        1       89      429
+
+Summary (tested on unseen room 'john')
+  model     parameters  float KB  int8 KB  acc float  acc int8
+  lenet        104,451     412.8    109.8      0.524     0.523
+
+Saved models and preprocess.json in 'results\sweep_lenetV2\lenet_w100_s50\test_john'.

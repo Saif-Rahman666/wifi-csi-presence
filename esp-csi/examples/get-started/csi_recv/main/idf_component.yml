@@ -1,0 +1,4 @@
+# Add this line to the dependencies you already have (keep esp-csi / gain control entries).
+dependencies:
+  espressif/esp-tflite-micro: "*"
+  espressif/esp_csi_gain_ctrl: "*"

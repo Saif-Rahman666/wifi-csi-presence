@@ -1,6 +1,6 @@
 {
-  "window_packets": 50,
-  "stride_packets": 25,
+  "window_packets": 100,
+  "stride_packets": 50,
   "input_columns": 64,
   "subcarrier_bins": [
     [
@@ -306,48 +306,24 @@
     "divide by scale"
   ],
   "detrend": true,
-  "scale": 0.09917394816875458,
+  "scale": 0.10860339552164078,
   "labels": [
     "empty",
     "still",
     "moving"
   ],
-  "test_room": null,
+  "test_room": "saifLiving",
   "models": [
-    {
-      "model": "mlp",
-      "parameters": 103011,
-      "float_kb": 405.36328125,
-      "int8_kb": 105.2578125,
-      "test_accuracy_float": 0.5714285714285714,
-      "test_accuracy_int8": 0.5835866261398176,
-      "int8_input": {
-        "scale": 0.28067106008529663,
-        "zero_point": -92
-      }
-    },
-    {
-      "model": "lenet",
-      "parameters": 55299,
-      "float_kb": 220.8515625,
-      "int8_kb": 61.8359375,
-      "test_accuracy_float": 0.9483282674772037,
-      "test_accuracy_int8": 0.9452887537993921,
-      "int8_input": {
-        "scale": 0.28067106008529663,
-        "zero_point": -92
-      }
-    },
     {
       "model": "cnn1d",
       "parameters": 7827,
-      "float_kb": 33.50390625,
-      "int8_kb": 12.2890625,
-      "test_accuracy_float": 0.9209726443768997,
-      "test_accuracy_int8": 0.9361702127659575,
+      "float_kb": 33.4765625,
+      "int8_kb": 12.265625,
+      "test_accuracy_float": 0.7226386806596702,
+      "test_accuracy_int8": 0.7286356821589205,
       "int8_input": {
-        "scale": 0.28067106008529663,
-        "zero_point": -92
+        "scale": 0.20789743959903717,
+        "zero_point": -84
       }
     }
   ]

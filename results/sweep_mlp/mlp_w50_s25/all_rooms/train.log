@@ -1,0 +1,64 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793098347.296491   29904 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793098353.457011   29904 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+Loading 36 recordings from 'data\raw'...
+No room held out (john, saifLiving, tim-living-room): training on all of them and testing on the last quarter of each recording.
+  This is NOT an unseen-room test; use it to build the final model, and evaluate that model on new recordings with evaluate.py.
+Validation: the last 15% of each training recording.
+Input: 50 packets x 64 columns (from 166 active of 192 subcarriers)
+Windows: train 5043, validation 846, test 1943
+  train: empty 1675, still 1706, moving 1662
+  test: empty 645, still 658, moving 640
+
+=== mlp ===
+trained 12 epochs, best validation accuracy 0.534
+Saved artifact at 'C:\Users\JOHN\AppData\Local\Temp\tmpl5ycfo3b'. The following endpoints are available:
+
+* Endpoint 'serve'
+  args_0 (POSITIONAL_ONLY): TensorSpec(shape=(None, 50, 64, 1), dtype=tf.float32, name='csi_window')
+Output Type:
+  TensorSpec(shape=(None, 3), dtype=tf.float32, name=None)
+Captures:
+  2810265199888: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265201616: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265200080: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265200464: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265202000: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265200272: TensorSpec(shape=(), dtype=tf.resource, name=None)
+Saved artifact at 'C:\Users\JOHN\AppData\Local\Temp\tmpyh6c043q'. The following endpoints are available:
+
+* Endpoint 'serve'
+  args_0 (POSITIONAL_ONLY): TensorSpec(shape=(None, 50, 64, 1), dtype=tf.float32, name='csi_window')
+Output Type:
+  TensorSpec(shape=(None, 3), dtype=tf.float32, name=None)
+Captures:
+  2810265199888: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265201616: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265200080: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265200464: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265202000: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  2810265200272: TensorSpec(shape=(), dtype=tf.resource, name=None)
+C:\Users\JOHN\AppData\Local\Programs\Python\Python311\Lib\site-packages\tensorflow\lite\python\convert.py:846: UserWarning: Statistics for quantized inputs were expected, but not specified; continuing anyway.
+  warnings.warn(
+fully_quantize: 0, inference_type: 6, input_inference_type: INT8, output_inference_type: INT8
+C:\Users\JOHN\AppData\Local\Programs\Python\Python311\Lib\site-packages\tensorflow\lite\python\interpreter.py:457: UserWarning:     Warning: tf.lite.Interpreter is deprecated and is scheduled for deletion in
+    TF 2.20. Please use the LiteRT interpreter from the ai_edge_litert package.
+    See the [migration guide](https://ai.google.dev/edge/litert/migration)
+    for details.
+    
+  warnings.warn(_INTERPRETER_DELETION_WARNING)
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+test accuracy: float 0.545, int8 0.554
+int8 confusion matrix (rows = true, columns = predicted):
+              empty    still   moving
+     empty      317      260       68
+     still      265      301       92
+    moving      101       80      459
+
+Summary
+  model     parameters  float KB  int8 KB  acc float  acc int8
+  mlp          103,011     405.4    105.3      0.545     0.554
+
+Saved models and preprocess.json in 'results\sweep_mlp\mlp_w50_s25\all_rooms'.

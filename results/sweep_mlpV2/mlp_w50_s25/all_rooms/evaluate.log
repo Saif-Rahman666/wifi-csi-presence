@@ -1,0 +1,24 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793099893.344502   35732 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793099898.617320   35732 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+C:\Users\JOHN\AppData\Local\Programs\Python\Python311\Lib\site-packages\tensorflow\lite\python\interpreter.py:457: UserWarning:     Warning: tf.lite.Interpreter is deprecated and is scheduled for deletion in
+    TF 2.20. Please use the LiteRT interpreter from the ai_edge_litert package.
+    See the [migration guide](https://ai.google.dev/edge/litert/migration)
+    for details.
+    
+  warnings.warn(_INTERPRETER_DELETION_WARNING)
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+Model: results\sweep_mlpV2\mlp_w50_s25\all_rooms\mlp_int8.tflite  (empty, still, moving, 50-packet windows)
+Scoring 14 recordings from 'data\scenarios'...
+
+
+scenario        obstruction       dist   RSSI  windows  moving found  quiet ok  balanced  3-class
+tim-garden                           -    -69      203         67.0%     72.5%     69.7%    48.3%
+tim-kitvhen                          -    -66      271         73.5%     69.7%     71.6%    59.8%
+tim-living                           -    -62      613         14.9%     96.4%     55.6%    19.1%
+
+moving found = recall of moving;  quiet ok = empty/still windows not called moving;  balanced = their average (chance 50%).
+
+Table saved to results\sweep_mlpV2\mlp_w50_s25\all_rooms\scenarios\scenario_results.csv
+Chart saved to results\sweep_mlpV2\mlp_w50_s25\all_rooms\scenarios\scenario_results.png

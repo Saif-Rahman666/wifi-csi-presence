@@ -1,0 +1,63 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793096495.329941   25580 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793096497.997019   25580 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+Loading 36 recordings from 'data\raw'...
+Rooms: ['john', 'saifLiving', 'tim-living-room'].  Testing on unseen room 'tim-living-room', training on the rest.
+Validation: the latest session of each room and label.
+Input: 50 packets x 64 columns (from 166 active of 192 subcarriers)
+Windows: train 3254, validation 1329, test 3362
+  train: empty 1085, still 1121, moving 1048
+  test: empty 1123, still 1116, moving 1123
+
+=== cnn1d ===
+trained 12 epochs, best validation accuracy 0.822
+Saved artifact at 'C:\Users\JOHN\AppData\Local\Temp\tmpn0f2gizo'. The following endpoints are available:
+
+* Endpoint 'serve'
+  args_0 (POSITIONAL_ONLY): TensorSpec(shape=(None, 50, 64, 1), dtype=tf.float32, name='csi_window')
+Output Type:
+  TensorSpec(shape=(None, 3), dtype=tf.float32, name=None)
+Captures:
+  1378682610768: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682611152: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682611344: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682611920: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682613264: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682610384: TensorSpec(shape=(), dtype=tf.resource, name=None)
+Saved artifact at 'C:\Users\JOHN\AppData\Local\Temp\tmpiz3dmawy'. The following endpoints are available:
+
+* Endpoint 'serve'
+  args_0 (POSITIONAL_ONLY): TensorSpec(shape=(None, 50, 64, 1), dtype=tf.float32, name='csi_window')
+Output Type:
+  TensorSpec(shape=(None, 3), dtype=tf.float32, name=None)
+Captures:
+  1378682610768: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682611152: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682611344: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682611920: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682613264: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  1378682610384: TensorSpec(shape=(), dtype=tf.resource, name=None)
+C:\Users\JOHN\AppData\Local\Programs\Python\Python311\Lib\site-packages\tensorflow\lite\python\convert.py:846: UserWarning: Statistics for quantized inputs were expected, but not specified; continuing anyway.
+  warnings.warn(
+fully_quantize: 0, inference_type: 6, input_inference_type: INT8, output_inference_type: INT8
+C:\Users\JOHN\AppData\Local\Programs\Python\Python311\Lib\site-packages\tensorflow\lite\python\interpreter.py:457: UserWarning:     Warning: tf.lite.Interpreter is deprecated and is scheduled for deletion in
+    TF 2.20. Please use the LiteRT interpreter from the ai_edge_litert package.
+    See the [migration guide](https://ai.google.dev/edge/litert/migration)
+    for details.
+    
+  warnings.warn(_INTERPRETER_DELETION_WARNING)
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+test accuracy: float 0.649, int8 0.645
+int8 confusion matrix (rows = true, columns = predicted):
+              empty    still   moving
+     empty      558      559        6
+     still      274      795       47
+    moving      143      164      816
+
+Summary (tested on unseen room 'tim-living-room')
+  model     parameters  float KB  int8 KB  acc float  acc int8
+  cnn1d          3,275      15.7      7.2      0.649     0.645
+
+Saved models and preprocess.json in 'D:\Code\SU\PROJECTS\TINYML\wifi-csi-presence\results\sweep\cnn1d_w50_s25_f8-16\test_tim-living-room'.

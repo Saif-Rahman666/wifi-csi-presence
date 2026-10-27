@@ -1,19 +1,3 @@
-"""Train and score many model settings in one go, and collect the results in one table.
-
-For every combination of model, window, stride and (for cnn1d) filters it:
-  1. runs leave-one-room-out: trains on all rooms but one, tests on the one left out,
-     once per room (tools/train_csi.py --test-room <room>);
-  2. optionally trains once on every room (--test-room none) and scores that model on the
-     scenario recordings with tools/evaluate.py.
-Finished runs are kept in results/sweep/<setting>/ and reused when you run the sweep again,
-so an interrupted sweep continues where it stopped (--fresh retrains everything).
-
-Examples:
-    python tools/sweep.py --data data/raw --models cnn1d --windows 50 100 --filters 8,16 16,32 32,64 16,32,32
-    python tools/sweep.py --data data/raw --models mlp lenet cnn1d --windows 50 100 --scenarios data/scenarios
-
-Each training run takes a minute or two on a laptop CPU: the number of runs is printed first.
-"""
 
 import argparse
 import csv
@@ -27,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parents[1]          # tools/ -> repository root
+REPO = Path(__file__).resolve().parents[1]         
 LABELS = ("empty", "still", "moving")
 
 TRAIN = REPO / "tools" / "train_csi.py"
@@ -36,7 +20,6 @@ N_BINS = 64
 
 
 def find_rooms(folder):
-    """Room names in a data folder: <room>/<date>/<label>_<time>.csv or <room>_<label>_<stamp>.csv."""
     rooms = set()
     for path in Path(folder).rglob("*.csv"):
         parts = path.stem.rsplit("_", 2)
@@ -44,14 +27,13 @@ def find_rooms(folder):
             rooms.add(parts[0])
         elif path.stem.split("_", 1)[0] in LABELS:
             room_dir = path.parent
-            if room_dir.name[:1].isdigit():          # skip the date folder
+            if room_dir.name[:1].isdigit():         
                 room_dir = room_dir.parent
             rooms.add(room_dir.name)
     return sorted(rooms)
 
 
 def macs(model, window, filters, n_bins=N_BINS, n_classes=3):
-    """Multiply-adds for one window (the work per prediction)."""
     if model == "mlp":
         return window * n_bins * 32 + 32 * 16 + 16 * n_classes
     if model == "lenet":
@@ -73,7 +55,6 @@ def macs(model, window, filters, n_bins=N_BINS, n_classes=3):
 
 
 def scores(table, labels):
-    """3-class accuracy and motion-vs-no-motion scores from a confusion matrix."""
     t = np.array(table)
     acc = float(np.trace(t) / t.sum()) if t.sum() else None
     motion = next((labels.index(l) for l in ("moving", "person") if l in labels), None)
@@ -88,7 +69,6 @@ def scores(table, labels):
 
 
 def train(cfg, data, test_room, out, epochs, fresh, log):
-    """Run train_csi.py once; return the saved model entry and labels, or None if it failed."""
     prep_path = out / "preprocess.json"
     if prep_path.exists() and not fresh:
         info = json.loads(prep_path.read_text())
@@ -211,7 +191,6 @@ def main():
         rows.append(row)
         log(f"    ({(time.time() - started) / 60:.0f} min so far)")
 
-    # ---- Table ----
     key = "balanced_mean" if not args.no_folds else "scenario_balanced_mean"
     rows.sort(key=lambda r: -(r.get(key) or 0))
     fmt = lambda v: "   -  " if v is None else f"{v * 100:5.1f}%"

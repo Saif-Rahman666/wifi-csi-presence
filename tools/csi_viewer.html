@@ -1171,9 +1171,6 @@
       return "rgb(" + rgb.join(",") + ")";
     }
 
-    /**
-     * Tone bands vs subcarrier index (count = CSI len / 2). Ranges follow esp-radar csi_sub_carrier_table.c byte spans / 2 where applicable.
-     */
     function buildSubcarrierColors(count) {
       const rules = new Map([
         [26, { red: [0, 12], green: [13, 25] }],
@@ -1183,14 +1180,11 @@
         [114, { red: [0, 28], green: [29, 56], yellow: [57, 113] }],
         [117, { red: [0, 28], green: [29, 56], yellow: [60, 116] }],
         [128, { red: [0, 31], green: [32, 63], yellow: [64, 127] }],
-        // ESP32/S2/S3/C3: HT20 + STBC, secondary below/above, total_bytes=380（csi_sub_carrier_table.c）
         [190, { red: [6, 31], green: [33, 58], yellow: [66, 184] }],
         [192, { red: [0, 63], green: [64, 127], yellow: [128, 191] }],
-        // ESP32C5/C61: HT40 + STBC, total_bytes=468
         [234, { red: [0, 56], green: [60, 116], yellow: [117, 233] }],
         [245, { red: [0, 61], green: [62, 122], yellow: [123, 244] }],
         [256, { red: [0, 63], green: [64, 127], yellow: [128, 255] }],
-        // ESP32/S2/S3/C3: HT40 + STBC, secondary below/above, total_bytes=612
         [306, { red: [0, 101], green: [102, 203], yellow: [204, 305] }],
       ]);
       const rule = rules.get(count);
@@ -1542,8 +1536,6 @@
         yMax: yAxis.max,
       };
 
-      // freeX charts stay in "live" X mode only when the user hasn't interacted yet;
-      // once xActive is true we keep user's X range regardless of the baseDomain.
       if (view.freeX) {
         if (!view.xActive && xIsFull) {
           view.xMin = null;

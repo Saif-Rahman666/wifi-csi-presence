@@ -1,18 +1,3 @@
-"""Live heat map of Wi-Fi CSI from an ESP32: a picture of the radio channel over time.
-
-Top panel:    one row per subcarrier, time running left to right (now = right edge).
-              Colour shows how far each subcarrier's amplitude is from its typical
-              level: grey = unchanged, red = stronger, blue = weaker.
-              A still room is flat grey. Movement shows up as red and blue streaks.
-Bottom panel: one number per moment, how much the channel is fluctuating overall.
-
-Example:
-    python csi_heatmap.py --port COM8
-
-Needs:  python -m pip install pyserial numpy matplotlib
-Close idf.py monitor and any other script using the port first.
-"""
-
 import argparse
 import sys
 import threading
@@ -29,7 +14,6 @@ BLUE, NEUTRAL, RED = "#1f5fd0", "#f0efec", "#cf3a2f"
 
 
 def parse_amplitudes(line):
-    """Return per-subcarrier amplitudes from one CSI_DATA line, or None if it is broken."""
     start = line.find("[")
     end = line.rfind("]")
     if not line.startswith("CSI_DATA") or start < 0 or end < start:
@@ -40,12 +24,11 @@ def parse_amplitudes(line):
         return None
     if values.size < 2 or values.size % 2:
         return None
-    imag, real = values[0::2], values[1::2]   # stored as imaginary, real pairs
+    imag, real = values[0::2], values[1::2]   
     return np.sqrt(imag * imag + real * real)
 
 
 def moving_average(rows, k):
-    """Average each k consecutive packets (keeps the number of rows)."""
     if k <= 1 or len(rows) < k:
         return rows
     padded = np.vstack([np.repeat(rows[:1], k - 1, axis=0), rows])
@@ -55,7 +38,6 @@ def moving_average(rows, k):
 
 
 class Viewer:
-    """Holds the recent packets and draws them. Packets are added from the serial thread."""
 
     def __init__(self, seconds=20.0, scale=15.0, smooth=3):
         import matplotlib.pyplot as plt
@@ -63,7 +45,7 @@ class Viewer:
 
         self.seconds, self.scale, self.smooth = seconds, scale, smooth
         self.lock = threading.Lock()
-        self.packets = deque()        # (arrival time, amplitudes)
+        self.packets = deque()      
         self.n_sub = None
 
         cmap = LinearSegmentedColormap.from_list("blue_grey_red", [BLUE, NEUTRAL, RED])
@@ -101,7 +83,7 @@ class Viewer:
             if self.n_sub is None:
                 self.n_sub = amp.size
             if amp.size != self.n_sub:
-                return                          # truncated or different packet type
+                return                        
             self.packets.append((when, amp))
             while self.packets and when - self.packets[0][0] > self.seconds:
                 self.packets.popleft()
@@ -116,17 +98,14 @@ class Viewer:
         span = max(now - times[0], 1e-3)
         rate = (len(times) - 1) / span
 
-        # Keep subcarriers that carry signal, and remove each packet's overall gain.
         mean_amp = data.mean(axis=0)
         mask = mean_amp > 0.1 * np.median(mean_amp[mean_amp > 0])
         data = data[:, mask]
         data = data / data.mean(axis=1, keepdims=True)
         data = moving_average(data, self.smooth)
 
-        # Change of each subcarrier from its own typical (median) level, in percent.
         change = (data / np.median(data, axis=0) - 1.0) * 100.0
 
-        # Overall fluctuation: spread of each subcarrier over the last ~1 s, averaged.
         win = max(5, int(rate))
         if len(change) > win:
             c1 = np.cumsum(np.vstack([np.zeros((1, change.shape[1])), change]), axis=0)

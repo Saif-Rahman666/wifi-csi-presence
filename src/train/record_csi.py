@@ -1,18 +1,3 @@
-"""Record labelled Wi-Fi CSI from an ESP32 running an esp-csi example.
-
-Reads the board's serial output, keeps only the CSI_DATA lines and saves them
-unchanged, in the layout described in data/README.md:
-
-    data/raw/<room>/<date>/<label>_<time>.csv
-    data/raw/<room>/<date>/<label>_<time>_meta.json     (committed to git; the CSV is not)
-
-Example:
-    python tools/record_csi.py --port COM8 --room kitchen --label empty --seconds 120 \
-        --subject john --distance 3 --positions "TX on shelf by door, RX on desk"
-
-Close idf.py monitor and the graph script first: only one program can use the port.
-"""
-
 import argparse
 import json
 import os
@@ -22,10 +7,10 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-import serial  # pip install pyserial
+import serial  
 
 LABELS = ["empty", "still", "moving"]
-REPO = Path(__file__).resolve().parents[1]          # tools/ -> repository root
+REPO = Path(__file__).resolve().parents[1]        
 
 
 def firmware_commit():
@@ -74,8 +59,8 @@ def main():
     print(f"Opened {args.port}. Waiting for CSI (the board may restart and reconnect)...")
 
     header = None
-    first_csi = None      # time the first CSI line arrived
-    record_start = None   # time recording began (after the delay)
+    first_csi = None    
+    record_start = None 
     saved = 0
     dropped = 0
     last_report = 0.0
@@ -87,11 +72,10 @@ def main():
                 now = time.time()
 
                 if first_csi is None and not raw:
-                    continue  # nothing yet, keep waiting
+                    continue
 
                 line = raw.decode("utf-8", errors="ignore").strip()
 
-                # The firmware prints one header line at boot: keep it for the file.
                 if header is None and line.startswith("type,"):
                     header = line
                     continue
@@ -103,7 +87,7 @@ def main():
 
                     if record_start is None:
                         if now - first_csi < args.delay:
-                            continue  # still in the delay, discard
+                            continue 
                         record_start = now
                         last_report = now
                         if header:

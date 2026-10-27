@@ -1,4 +1,0 @@
-scenario,obstruction,distance_m,rssi_dbm,packets_per_s,windows,moving_windows,quiet_windows,moving_found,quiet_called_quiet,balanced,accuracy_3class,notes
-tim-garden,,,-68.8,43.6,99,46,53,0.782608695652174,0.8113207547169812,0.7969647251845775,0.46464646464646464,"tx outside rx approx 8m outside away, person outside no obs LOS | tx outside rx approx 8m outside away, person in hall wood obs no LOS"
-tim-kitvhen,,,-66.1,46.4,132,79,53,0.6582278481012658,0.5849056603773585,0.6215667542393122,0.6287878787878788,"txin coat rack rx in kitchen table, person moving in kitchen wooden door obs LOS | txin coat rack rx in far side of hall, person in kitchen wooden door obs no LOS"
-tim-living,,,-61.7,47.0,303,276,27,0.057971014492753624,1.0,0.5289855072463768,0.052805280528052806,"tx rx in living, person moving in guest bed no LOS | tx rx in living, person moving in hall glass door obs no LOS"

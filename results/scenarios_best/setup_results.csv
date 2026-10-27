@@ -1,7 +1,0 @@
-scenario,notes,recordings,labels,windows,moving_found,quiet_called_quiet,balanced,accuracy_3class
-tim-garden,"tx outside rx approx 8m outside away, person in hall wood obs no LOS",2,moving+still,47,0.5714285714285714,0.8076923076923077,0.6895604395604396,0.2765957446808511
-tim-garden,"tx outside rx approx 8m outside away, person outside no obs LOS",2,moving+still,52,0.96,0.8148148148148148,0.8874074074074074,0.6346153846153846
-tim-kitvhen,"txin coat rack rx in far side of hall, person in kitchen wooden door obs no LOS",2,moving+still,54,0.0,1.0,0.5,0.5
-tim-kitvhen,"txin coat rack rx in kitchen table, person moving in kitchen wooden door obs LOS",3,moving+still,78,1.0,0.15384615384615385,0.5769230769230769,0.717948717948718
-tim-living,"tx rx in living, person moving in guest bed no LOS",3,moving+still,249,0.07207207207207207,1.0,0.536036036036036,0.0642570281124498
-tim-living,"tx rx in living, person moving in hall glass door obs no LOS",2,moving,54,0.0,,,0.0

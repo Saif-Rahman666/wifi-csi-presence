@@ -1,18 +1,3 @@
-"""Per-class precision, recall and F1 from the sweep results.
-
-Reads the confusion matrices that train_csi.py saved in every preprocess.json under
-results/sweep/<setting>/{test_<room>, all_rooms}/ and writes:
-
-  results/sweep/per_class_metrics.csv   every setting, every fold, every class
-  results/sweep/per_class_tables.md     ready-to-paste tables for one setting
-
-Each fold is scored on its own, then averaged over the held-out rooms (the same way as
-the sweep table). The motion view folds empty and still into "quiet".
-
-    python tools/per_class_metrics.py
-    python tools/per_class_metrics.py --setting cnn1d_w100_s50_f8-16
-"""
-
 import argparse
 import csv
 import json
@@ -24,7 +9,6 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def prf(table):
-    """Precision, recall, F1 and support per class. Rows = true label, columns = predicted."""
     t = np.asarray(table, dtype=float)
     tp = np.diag(t)
     predicted = t.sum(axis=0)
@@ -38,7 +22,6 @@ def prf(table):
 
 
 def motion_table(table, labels):
-    """Fold a 3-class matrix into moving vs quiet (empty + still)."""
     t = np.asarray(table)
     m = labels.index("moving")
     q = [i for i in range(len(labels)) if i != m]
@@ -66,7 +49,7 @@ def main():
 
     sweep = Path(args.sweep)
     rows = []
-    summary = {}   # (setting, view) -> {"folds": {room: (labels, p, r, f1, n)}, "all": ...}
+    summary = {}  
     for setting in sorted(p for p in sweep.iterdir() if p.is_dir()):
         for run in sorted(p for p in setting.iterdir() if p.is_dir() and (p / "preprocess.json").exists()):
             loaded = load(run)
@@ -92,7 +75,6 @@ def main():
         writer.writerows(rows)
     print(f"Wrote {out_csv} ({len(rows)} rows)")
 
-    # ---- Markdown tables for one setting ----
     md = [f"# Per-class metrics: {args.setting}\n"]
     for view in ("3-class", "motion"):
         runs = summary.get((args.setting, view))

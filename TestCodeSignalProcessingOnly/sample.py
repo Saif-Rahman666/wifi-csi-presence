@@ -1,30 +1,10 @@
-"""Simple threshold motion detector for Wi-Fi CSI from an ESP32 (no machine learning).
-
-How it works:
-  1. Each packet's CSI is turned into one amplitude per subcarrier.
-  2. Each packet is divided by its own average amplitude, so steps in the
-     receiver's gain do not look like motion.
-  3. A few consecutive packets are averaged together. Random per-packet noise
-     cancels out, while the slower changes caused by a moving body remain.
-  4. Over the last second or so, it measures how much each subcarrier
-     fluctuates and averages that into one number: the motion score.
-  5. During the first seconds (keep the room still) it learns the quiet level.
-     Motion is reported when the score rises above  quiet level x factor.
-
-Example:
-    python detect_motion.py --port COM8
-
-Close idf.py monitor and the graph script first: only one program can use the port.
-"""
-
 import argparse
 import sys
 import time
 from collections import deque
 
 import numpy as np
-import serial  # pip install pyserial numpy
-
+import serial  
 
 def parse_amplitudes(line):
     """Return per-subcarrier amplitudes from one CSI_DATA line, or None if it is broken."""
@@ -38,7 +18,7 @@ def parse_amplitudes(line):
         return None
     if values.size < 2 or values.size % 2:
         return None
-    imag, real = values[0::2], values[1::2]   # stored as imaginary, real pairs
+    imag, real = values[0::2], values[1::2]  
     return np.sqrt(imag * imag + real * real)
 
 
@@ -83,13 +63,13 @@ def main():
     live = sys.stdout.isatty()
     print(f"Opened {args.port}. Waiting for CSI...")
 
-    n_sub = None            # subcarriers per packet, fixed by the first good packet
-    calib_rows = []         # raw amplitudes collected during calibration
+    n_sub = None            
+    calib_rows = []       
     calib_start = None
-    mask = None             # which subcarriers carry signal
+    mask = None             
     threshold = None
     window = deque(maxlen=args.window)
-    recent = deque(maxlen=max(1, args.smooth))   # last few packets, for averaging
+    recent = deque(maxlen=max(1, args.smooth))   
     since_update = 0
     state = None
     last_motion = 0.0
@@ -109,10 +89,9 @@ def main():
                 if n_sub is None:
                     n_sub = amp.size
                 if amp.size != n_sub:
-                    continue                      # truncated or different packet type
+                    continue                     
                 now = last_packet = time.time()
-
-                # ---- Calibration: learn which subcarriers are used and the quiet level ----
+              
                 if threshold is None:
                     if calib_start is None:
                         calib_start = now
@@ -141,7 +120,6 @@ def main():
                     print("Now move around. Ctrl+C to stop.\n")
                     continue
 
-                # ---- Live detection ----
                 row = amp[mask]
                 level = row.mean()
                 if level <= 0:

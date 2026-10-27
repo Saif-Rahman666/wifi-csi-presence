@@ -1,17 +1,3 @@
-"""Run a trained CSI model live on the PC, on the stream from the ESP32 receiver.
-
-Reads CSI from the serial port, repeats the preprocessing saved by train_csi.py
-(models/checkpoints/preprocess.json), runs the int8 TFLite model on each window and prints
-the predicted label. This is the same arithmetic the ESP32 will do later.
-
-Example:
-    python src/deploy/predict_live.py --port COM8
-    python src/deploy/predict_live.py --port COM8 --model models/checkpoints/lenet_int8.tflite
-
-Needs:  python -m pip install tensorflow numpy pyserial
-Close idf.py monitor and any other script using the port first.
-"""
-
 import argparse
 import json
 import os
@@ -25,7 +11,7 @@ import numpy as np
 import serial
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]          # src/deploy/ -> repository root
+REPO = Path(__file__).resolve().parents[2]       
 CHECKPOINTS = REPO / "models" / "checkpoints"
 
 
@@ -41,7 +27,7 @@ def parse_amplitudes(line):
         return None
     if values.size < 2 or values.size % 2:
         return None
-    imag, real = values[0::2], values[1::2]   # stored as imaginary, real pairs
+    imag, real = values[0::2], values[1::2]   
     return np.sqrt(imag * imag + real * real)
 
 
@@ -77,7 +63,7 @@ def main():
     window, stride = prep["window_packets"], prep["stride_packets"]
     bins = [np.array(b) for b in prep["subcarrier_bins"]]
     labels, scale, detrend = prep["labels"], prep["scale"], prep["detrend"]
-    needed = max(int(b.max()) for b in bins) + 1      # subcarriers a packet must have
+    needed = max(int(b.max()) for b in bins) + 1   
 
     interpreter = load_interpreter(args.model)
     inp = interpreter.get_input_details()[0]
@@ -92,8 +78,6 @@ def main():
         sys.exit(f"Could not open {args.port}: {err}\n"
                  "Close any monitor or other script that is using the port.")
 
-    # Presence: a still person looks like an empty room to the model, so presence is
-    # inferred from movement and held for a while afterwards.
     motion_label = next((l for l in ("moving", "person") if l in labels), None)
     use_presence = args.hold > 0 and motion_label is not None
     last_motion, present = None, False
@@ -129,7 +113,6 @@ def main():
                 packets += 1
                 started = started or time.time()
 
-                # Same steps as training: average into columns, remove the packet's gain.
                 binned = np.array([amp[b].mean() for b in bins], dtype=np.float32)
                 rows.append(binned / max(float(binned.mean()), 1e-6))
                 since += 1

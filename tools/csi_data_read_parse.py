@@ -22,11 +22,10 @@ import matplotlib.pyplot as plt
 from scipy.stats import linregress
 import statsmodels.api as sm
 
-# Reduce displayed waveforms to avoid display freezes
 CSI_VAID_SUBCARRIER_INTERVAL = 1
 csi_vaid_subcarrier_len =0
 
-CSI_DATA_INDEX = 200  # buffer size
+CSI_DATA_INDEX = 200 
 CSI_DATA_COLUMNS = 490
 DATA_COLUMNS_NAMES_C5C6 = ['type', 'id', 'mac', 'rssi', 'rate','noise_floor','fft_gain','agc_gain', 'channel', 'local_timestamp',  'sig_len', 'rx_state', 'len', 'first_word', 'data']
 DATA_COLUMNS_NAMES = ['type', 'id', 'mac', 'rssi', 'rate', 'sig_mode', 'mcs', 'bandwidth', 'smoothing', 'not_sounding', 'aggregation', 'stbc', 'fec_coding',
@@ -51,9 +50,9 @@ class csi_data_graphical_window(QWidget):
         self.plotWidget_ted.setGeometry(QtCore.QRect(0, 0, 640, 300))
         self.plotWidget_ted.setYRange(-2*np.pi, 2*np.pi)
         self.plotWidget_ted.addLegend()
-        self.plotWidget_ted.setTitle('Phase Data - Last Frame')  # 添加标题
-        self.plotWidget_ted.setLabel('left', 'Phase (rad)')  # Y轴标签
-        self.plotWidget_ted.setLabel('bottom', 'Subcarrier Index')  # X轴标签
+        self.plotWidget_ted.setTitle('Phase Data - Last Frame') 
+        self.plotWidget_ted.setLabel('left', 'Phase (rad)') 
+        self.plotWidget_ted.setLabel('bottom', 'Subcarrier Index')  
 
         self.csi_amplitude_array = np.abs(csi_data_complex)
         self.csi_phase_array = np.angle(csi_data_complex)
@@ -63,9 +62,9 @@ class csi_data_graphical_window(QWidget):
         self.plotWidget_multi_data.setGeometry(QtCore.QRect(0, 300, 1280, 300))
         self.plotWidget_multi_data.getViewBox().enableAutoRange(axis=pg.ViewBox.YAxis)
         self.plotWidget_multi_data.addLegend()
-        self.plotWidget_multi_data.setTitle('Subcarrier Amplitude Data')  # 添加标题
-        self.plotWidget_multi_data.setLabel('left', 'Amplitude')  # Y轴标签
-        self.plotWidget_multi_data.setLabel('bottom', 'Time (Cumulative Packet Count)')  # X轴标签
+        self.plotWidget_multi_data.setTitle('Subcarrier Amplitude Data') 
+        self.plotWidget_multi_data.setLabel('left', 'Amplitude')  
+        self.plotWidget_multi_data.setLabel('bottom', 'Time (Cumulative Packet Count)') 
 
         self.curve_list = []
         agc_curve = self.plotWidget_multi_data.plot(
@@ -86,9 +85,9 @@ class csi_data_graphical_window(QWidget):
         self.plotWidget_phase_data.setGeometry(QtCore.QRect(0, 600, 1280, 300))
         self.plotWidget_phase_data.getViewBox().enableAutoRange(axis=pg.ViewBox.YAxis)
         self.plotWidget_phase_data.addLegend()
-        self.plotWidget_multi_data.setTitle('Subcarrier Phase Data')  # 添加标题
-        self.plotWidget_multi_data.setLabel('left', 'Phase (rad)')  # Y轴标签
-        self.plotWidget_multi_data.setLabel('bottom', 'Time (Cumulative Packet Count)')  # X轴标签
+        self.plotWidget_multi_data.setTitle('Subcarrier Phase Data') 
+        self.plotWidget_multi_data.setLabel('left', 'Phase (rad)')
+        self.plotWidget_multi_data.setLabel('bottom', 'Time (Cumulative Packet Count)') 
 
 
         self.curve_phase_list = []
@@ -98,15 +97,14 @@ class csi_data_graphical_window(QWidget):
             self.curve_phase_list.append(phase_curve)
 
 
-        # IQ 图窗口
+        
         self.plotWidget_iq = PlotWidget(self)
         self.plotWidget_iq.setGeometry(QtCore.QRect(640, 0, 640, 300))
         self.plotWidget_iq.setLabel('left', 'Q (Imag)')
         self.plotWidget_iq.setLabel('bottom', 'I (Real)')
         self.plotWidget_iq.setTitle('IQ Plot - Last Frame')
         view_box = self.plotWidget_iq.getViewBox()
-        view_box.setRange(QtCore.QRectF(-30, -30, 60, 60))  # 可以调整范围的大小，保证原点在中间
-
+        view_box.setRange(QtCore.QRectF(-30, -30, 60, 60)) 
         self.plotWidget_iq.getViewBox().setAspectLocked(True)
         self.iq_scatter = ScatterPlotItem(size=6)
         self.plotWidget_iq.addItem(self.iq_scatter)
@@ -230,9 +228,6 @@ def csi_data_read_parse(port: str, csv_writer, log_file_fd,callback=None):
 
         csv_writer.writerow(csi_data)
 
-        # Rotate data to the left
-        # csi_data_array[:-1] = csi_data_array[1:]
-        # csi_data_phase[:-1] = csi_data_phase[1:]
         csi_data_complex[:-1] = csi_data_complex[1:]
         agc_gain_data[:-1] = agc_gain_data[1:]
         fft_gain_data[:-1] = fft_gain_data[1:]

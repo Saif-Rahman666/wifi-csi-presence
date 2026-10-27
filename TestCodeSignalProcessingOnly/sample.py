@@ -7,7 +7,6 @@ import numpy as np
 import serial  
 
 def parse_amplitudes(line):
-    """Return per-subcarrier amplitudes from one CSI_DATA line, or None if it is broken."""
     start = line.find("[")
     end = line.rfind("]")
     if not line.startswith("CSI_DATA") or start < 0 or end < start:
@@ -23,7 +22,6 @@ def parse_amplitudes(line):
 
 
 def smooth_rows(rows, k):
-    """Moving average over k consecutive packets, for a (packets x subcarriers) block."""
     if k <= 1:
         return rows
     total = np.cumsum(rows, axis=0)
@@ -32,7 +30,6 @@ def smooth_rows(rows, k):
 
 
 def motion_score(window):
-    """Average fluctuation over time across subcarriers, for a (packets x subcarriers) block."""
     return float(np.std(window, axis=0).mean())
 
 

@@ -1,15 +1,3 @@
-#!/usr/bin/env python3
-# -*-coding:utf-8-*-
-
-# SPDX-FileCopyrightText: 2021-2025 Espressif Systems (Shanghai) CO LTD
-# SPDX-License-Identifier: Apache-2.0
-#
-
-# WARNING: we don't check for Python build-time dependencies until
-# check_environment() function below. If possible, avoid importing
-# any external libraries here - put in external script, or import in
-# their specific function instead.
-
 import sys
 import csv
 import json

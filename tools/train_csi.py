@@ -1,21 +1,3 @@
-"""Train small SenseFi-style models on ESP32 CSI recordings and export them as int8 TFLite.
-
-Input:  the recordings in data/ (any depth), written by tools/record_csi.py.
-Output: in models/checkpoints/ (not committed): <name>_int8.tflite (for the ESP32),
-        <name>_float.tflite, <name>.keras and preprocess.json (what the firmware must repeat).
-        Copy the ones you keep into models/final/.
-
-The architectures follow the SenseFi benchmark (Yang et al., Patterns 2023), shrunk to
-fit an ESP32-C3:  mlp (fully connected), lenet (2D CNN), plus a 1D CNN over time.
-
-Examples:
-    python tools/train_csi.py --test-room kitchen
-    python tools/train_csi.py --test-room kitchen --model lenet --binary
-
-Needs:  python -m pip install tensorflow numpy
-(Install into your normal Python, NOT the ESP-IDF terminal's environment.)
-"""
-
 import argparse
 import json
 import os
@@ -28,13 +10,11 @@ os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "2")
 import numpy as np
 
 LABEL_ORDER = ["empty", "still", "moving"]
-REPO = Path(__file__).resolve().parents[1]          # tools/ -> repository root
+REPO = Path(__file__).resolve().parents[1]        
 
 
-# --------------------------------------------------------------------------- loading
 
 def load_recording(path):
-    """Read one CSV and return amplitudes with shape (packets, subcarriers)."""
     rows = []
     with open(path, "r", errors="ignore") as f:
         for line in f:
@@ -51,19 +31,13 @@ def load_recording(path):
                 rows.append(values)
     if not rows:
         return np.zeros((0, 0), dtype=np.float32)
-    usual = Counter(r.size for r in rows).most_common(1)[0][0]   # drop odd-length packets
+    usual = Counter(r.size for r in rows).most_common(1)[0][0]  
     data = np.array([r for r in rows if r.size == usual])
-    imag, real = data[:, 0::2], data[:, 1::2]                    # stored as imaginary, real
+    imag, real = data[:, 0::2], data[:, 1::2]                    
     return np.sqrt(imag * imag + real * real)
 
 
 def find_recordings(folder, labels=None, quiet=False):
-    """Find recordings in a folder and its subfolders, as a list of (room, label, path).
-
-    Two naming schemes are understood:
-      <room>/<date>/<label>_<time>.csv      the layout in data/README.md, written by tools/record_csi.py
-      <room>_<label>_<date-time>.csv        the older flat names
-    """
     labels = labels or LABEL_ORDER
     found = []
     for path in sorted(Path(folder).rglob("*.csv")):
@@ -73,7 +47,7 @@ def find_recordings(folder, labels=None, quiet=False):
             found.append((parts[0], parts[1], path))
         elif first in labels:
             room_dir = path.parent
-            if room_dir.name[:1].isdigit():          # skip the date folder
+            if room_dir.name[:1].isdigit():        
                 room_dir = room_dir.parent
             found.append((room_dir.name, first, path))
         elif not quiet:
@@ -81,19 +55,16 @@ def find_recordings(folder, labels=None, quiet=False):
     return found
 
 
-# --------------------------------------------------------------------- preprocessing
 
 class Preprocessor:
-    """Turns raw amplitudes into model inputs. The firmware has to repeat these steps."""
 
     def __init__(self, window, stride, n_bins, detrend):
         self.window, self.stride, self.n_bins, self.detrend = window, stride, n_bins, detrend
-        self.active = None     # indices of subcarriers that carry signal
-        self.bins = None       # which active subcarriers are averaged into each input column
-        self.scale = 1.0       # one number the inputs are divided by
+        self.active = None    
+        self.bins = None      
+        self.scale = 1.0      
 
     def fit_layout(self, amplitudes):
-        """Choose the active subcarriers and group them into n_bins columns."""
         mean_amp = np.concatenate(amplitudes).mean(axis=0)
         self.active = np.flatnonzero(mean_amp > 0.1 * np.median(mean_amp[mean_amp > 0]))
         n_bins = min(self.n_bins, self.active.size)
@@ -101,23 +72,15 @@ class Preprocessor:
         self.n_bins = n_bins
 
     def rows(self, amp):
-        """Per packet: average subcarriers into bins, then divide by the packet's mean.
-
-        Dividing by the mean removes the receiver's gain steps. A still room then
-        gives values close to 1 in every column.
-        """
         binned = np.stack([amp[:, idx].mean(axis=1) for idx in self.bins], axis=1)
         return binned / np.maximum(binned.mean(axis=1, keepdims=True), 1e-6)
 
     def windows(self, rows):
-        """Cut into windows of shape (window, n_bins), centred on zero."""
         starts = range(0, len(rows) - self.window + 1, self.stride)
         if len(rows) < self.window:
             return np.zeros((0, self.window, self.n_bins), dtype=np.float32)
         out = np.stack([rows[s:s + self.window] for s in starts]).astype(np.float32)
         if self.detrend:
-            # Relative change from the window's own average: removes the static
-            # profile, which is mostly a fingerprint of the room and board positions.
             out = out / np.maximum(out.mean(axis=1, keepdims=True), 1e-6) - 1.0
         else:
             out = out - 1.0
@@ -146,22 +109,15 @@ class Preprocessor:
 # ---------------------------------------------------------------------------- models
 
 def build_model(name, window, n_bins, n_classes, filters=(16, 32)):
-    """SenseFi-style architectures, shrunk for a microcontroller.
-
-    filters: cnn1d only. One convolution per number, so (16, 32) is the default
-    two-layer model, (8, 16) a narrower one and (16, 32, 32) a deeper one.
-    """
     from tensorflow import keras
     from tensorflow.keras import layers
 
     inputs = keras.Input(shape=(window, n_bins, 1), name="csi_window")
     if name == "mlp":
-        # SenseFi MLP: three fully connected layers.
         x = layers.Flatten()(inputs)
         x = layers.Dense(32, activation="relu")(x)
         x = layers.Dense(16, activation="relu")(x)
     elif name == "lenet":
-        # SenseFi LeNet: three conv + pooling stages, then two fully connected layers.
         x = layers.Conv2D(8, 5, padding="same", activation="relu")(inputs)
         x = layers.MaxPooling2D(2)(x)
         x = layers.Conv2D(16, 3, padding="same", activation="relu")(x)
@@ -171,8 +127,7 @@ def build_model(name, window, n_bins, n_classes, filters=(16, 32)):
         x = layers.Flatten()(x)
         x = layers.Dense(32, activation="relu")(x)
     elif name == "cnn1d":
-        # 1D CNN over time: the kernels span every column, so columns act as channels.
-        steps = (window - 4) // 2 - 4 * (len(filters) - 1)       # time steps left after the last layer
+        steps = (window - 4) // 2 - 4 * (len(filters) - 1)   
         if steps < 1:
             raise ValueError(f"{len(filters)} layers are too deep for a {window}-packet window")
         x = layers.Conv2D(filters[0], (5, n_bins), activation="relu")(inputs)
@@ -229,7 +184,6 @@ def confusion(true, predicted, n):
     return table
 
 
-# ------------------------------------------------------------------------------ main
 
 def main():
     parser = argparse.ArgumentParser(description="Train SenseFi-style models on ESP32 CSI")
@@ -264,7 +218,6 @@ def main():
         sys.exit("TensorFlow is not installed. Run:  python -m pip install tensorflow numpy")
     keras.utils.set_random_seed(args.seed)
 
-    # ---- Load ----
     recordings = find_recordings(args.data)
     if not recordings:
         sys.exit(f"No recordings found in '{args.data}'.")
@@ -290,7 +243,6 @@ def main():
             return 0 if label == "empty" else 1
         return label_names.index(label)
 
-    # ---- Split: hold out a whole room when there is more than one ----
     rooms = sorted({r[0] for r in loaded})
     if args.test_room and args.test_room != "none" and args.test_room not in rooms:
         sys.exit(f"Room '{args.test_room}' not found. Rooms in the data: {rooms}")
@@ -305,7 +257,7 @@ def main():
               "quarter of each recording.\n  This is NOT an unseen-room test; use it to build the final "
               "model, and evaluate that model on new recordings with evaluate.py.")
 
-    train_parts, val_parts, test_parts = [], [], []     # lists of (amplitudes, class)
+    train_parts, val_parts, test_parts = [], [], []    
     groups = {}
     for room, label, amp, fname in loaded:
         c = class_of(label)
@@ -318,11 +270,9 @@ def main():
             amp = amp[:cut]
         groups.setdefault((room, label), []).append((fname, amp, c))
 
-    # Validation: the latest session of each room and label, so it comes from a
-    # recording the model never trained on. With one session, use its last 15%.
     whole_sessions = True
     for sessions in groups.values():
-        sessions.sort()                                  # file names sort by date-time
+        sessions.sort()                               
         if len(sessions) >= 2 and test_room:
             *train_sessions, (_, amp, c) = sessions
             val_parts.append((amp, c))
@@ -336,7 +286,6 @@ def main():
     print("Validation: " + ("the latest session of each room and label."
                             if whole_sessions else "the last 15% of each training recording."))
 
-    # ---- Preprocess ----
     prep = Preprocessor(args.window, args.stride, args.columns, detrend=not args.keep_level)
     prep.fit_layout([amp for amp, _ in train_parts])
 
@@ -369,7 +318,6 @@ def main():
     names = ["mlp", "lenet", "cnn1d"] if args.model == "all" else [args.model]
     results = []
 
-    # ---- Train, export and test each model ----
     for name in names:
         print(f"\n=== {name} ===")
         model = build_model(name, args.window, prep.n_bins, len(label_names), filters)

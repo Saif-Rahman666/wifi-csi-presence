@@ -1,12 +1,3 @@
-/*
- * On-device port of src/deploy/predict_live.py
- *
- * Pipeline (same arithmetic as the Python script):
- *   CSI packet -> amplitudes -> average into bins -> divide by packet mean   (csi_model_feed, CSI callback)
- *   rows queue -> sliding window -> detrend/scale -> int8 quantize           (inference task)
- *   TFLite Micro invoke -> dequantize -> smoothing -> argmax -> presence hold
- */
-
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,24 +15,21 @@
 #include "tensorflow/lite/schema/schema_generated.h"
 
 #include "csi_model.h"
-#include "preprocess_config.h"      /* generated from preprocess.json by tools/gen_preprocess_h.py */
-
-/* ---- tunables (same meaning as the Python arguments) ---- */
+#include "preprocess_config.h"    
 #ifndef CSI_SMOOTH
-#define CSI_SMOOTH          3       /* --smooth: average probabilities of this many windows (1 = off), max 16 */
+#define CSI_SMOOTH          3      
 #endif
 #ifndef CSI_HOLD_SECONDS
-#define CSI_HOLD_SECONDS    30      /* --hold: PRESENT until this many seconds without movement (0 = off) */
+#define CSI_HOLD_SECONDS    30     
 #endif
 #ifndef TENSOR_ARENA_BYTES
-#define TENSOR_ARENA_BYTES  (64 * 1024)   /* check the "arena used" log line and shrink/grow */
+#define TENSOR_ARENA_BYTES  (64 * 1024)   
 #endif
 #define SMOOTH_MAX          16
 #define QUEUE_LEN           32
 
 static const char *TAG = "csi_model";
 
-/* The .tflite file, embedded by EMBED_FILES in main/CMakeLists.txt */
 extern const uint8_t model_start[] asm("_binary_cnn1d_int8_tflite_start");
 
 typedef struct {
@@ -51,18 +39,15 @@ typedef struct {
 static QueueHandle_t s_queue;
 static volatile uint32_t s_dropped;
 static volatile uint32_t s_skipped;
-static int s_needed;                 /* subcarriers a packet must have */
-static int s_motion_label = -1;      /* index of "moving"/"person" label, -1 = presence off */
-
+static int s_needed;                 
+static int s_motion_label = -1;      
 static uint8_t *s_arena;
 static tflite::MicroInterpreter *s_interp;
 static TfLiteTensor *s_in;
 static TfLiteTensor *s_out;
 
-static float s_rows[PREP_WINDOW][PREP_NUM_BINS];   /* circular window of binned rows */
+static float s_rows[PREP_WINDOW][PREP_NUM_BINS];  
 
-/* ------------------------------------------------------------------------- */
-/* Runs in the Wi-Fi task: keep it short. Only the subcarriers the bins use are computed. */
 extern "C" void csi_model_feed(const int8_t *buf, int len, float gain)
 {
     if (!s_queue || !buf || len < 2 || (len & 1)) {
@@ -80,7 +65,6 @@ extern "C" void csi_model_feed(const int8_t *buf, int len, float gain)
         const int k0 = PREP_BIN_OFF[b], k1 = PREP_BIN_OFF[b + 1];
         for (int k = k0; k < k1; k++) {
             const int i = PREP_BIN_IDX[k];
-            /* stored as imaginary, real pairs; gain applied and truncated like the printed CSV */
             const float im = (float)(int16_t)(gain * buf[2 * i]);
             const float re = (float)(int16_t)(gain * buf[2 * i + 1]);
             sum += sqrtf(im * im + re * re);
@@ -93,7 +77,7 @@ extern "C" void csi_model_feed(const int8_t *buf, int len, float gain)
         mean = 1e-6f;
     }
     for (int b = 0; b < PREP_NUM_BINS; b++) {
-        item.v[b] /= mean;           /* remove the packet's gain */
+        item.v[b] /= mean;          
     }
 
     if (xQueueSend(s_queue, &item, 0) != pdTRUE) {
@@ -101,7 +85,6 @@ extern "C" void csi_model_feed(const int8_t *buf, int len, float gain)
     }
 }
 
-/* ------------------------------------------------------------------------- */
 static void infer_task(void *arg)
 {
     bin_row_t item;
@@ -144,7 +127,6 @@ static void infer_task(void *arg)
         }
         since = 0;
 
-        /* Build the input [1, window, bins, 1]. Oldest row is at `head` once the window is full. */
         int8_t *in_q = s_in->data.int8;
         float *in_f = s_in->data.f;
         for (int b = 0; b < PREP_NUM_BINS; b++) {
@@ -179,7 +161,6 @@ static void infer_task(void *arg)
         }
         const float took_ms = (esp_timer_get_time() - t0) / 1000.0f;
 
-        /* Dequantize output into the smoothing buffer */
         for (int l = 0; l < PREP_NUM_LABELS; l++) {
             recent[recent_i][l] = out_int8 ? ((float)s_out->data.int8[l] - out_zero) * out_scale
                                            : s_out->data.f[l];
@@ -202,7 +183,6 @@ static void infer_task(void *arg)
             }
         }
 
-        /* Presence: movement sets it, it expires after `hold` seconds without movement */
         const int64_t now = esp_timer_get_time();
         if (use_presence) {
             if (best == s_motion_label) {
@@ -241,10 +221,8 @@ static void infer_task(void *arg)
     }
 }
 
-/* ------------------------------------------------------------------------- */
 extern "C" esp_err_t csi_model_init(void)
 {
-    /* Highest subcarrier index a packet must contain */
     s_needed = 0;
     for (int k = 0; k < PREP_BIN_OFF[PREP_NUM_BINS]; k++) {
         if (PREP_BIN_IDX[k] + 1 > s_needed) {
@@ -252,7 +230,6 @@ extern "C" esp_err_t csi_model_init(void)
         }
     }
 
-    /* Presence uses "moving" if present, otherwise "person" (same as Python) */
     const char *candidates[] = {"moving", "person"};
     for (int c = 0; c < 2 && s_motion_label < 0; c++) {
         for (int l = 0; l < PREP_NUM_LABELS; l++) {
@@ -275,7 +252,6 @@ extern "C" esp_err_t csi_model_init(void)
         return ESP_ERR_NO_MEM;
     }
 
-    /* AllOpsResolver is easiest for bring-up; swap for MicroMutableOpResolver later to save flash. */
     static tflite::AllOpsResolver resolver;
     s_interp = new tflite::MicroInterpreter(model, resolver, s_arena, TENSOR_ARENA_BYTES);
     if (s_interp->AllocateTensors() != kTfLiteOk) {
@@ -287,7 +263,6 @@ extern "C" esp_err_t csi_model_init(void)
     s_in = s_interp->input(0);
     s_out = s_interp->output(0);
 
-    /* Same sanity check as Python: model input must match preprocess.json */
     if (s_in->dims->size < 3 || s_in->dims->data[1] != PREP_WINDOW || s_in->dims->data[2] != PREP_NUM_BINS) {
         ESP_LOGE(TAG, "Model input shape does not match preprocess_config.h (%d x %d). "
                       "Use files from the same training run.", PREP_WINDOW, PREP_NUM_BINS);
